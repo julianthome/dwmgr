@@ -1,2 +1,59 @@
-# dwmgr
-A configuration manager for dwm
+# dwmgr - a simple configuration manager for DWM
+
+dwmgr is configuration manager for [DWM](https://dwm.suckless.org/). DWM is a
+dynamic tiling window manager which is based on the suckless philosophy.
+
+DWM is customized through patches which can be difficult to handle withoug
+version control especially during the initial experimentation phase in which
+you try out features to figure out what functionality should be included in the
+personal DWM config.
+
+dwmgr is supposed to help with this task by importing all the patches in a
+personal git repository. Every features gets its own branch which then could be
+arbitrarily combined in a personal git branch. This makes it very easy to store
+and share a personal DWM configuration, to easily update DWM by just pulling
+the changes from the official DWM git repository. 
+
+# Usage
+
+The `h` option will show you all available options.
+
+```
+>> ./dwmgr.sh -h
+    ./dwmgr.sh
+       -h : print help
+       -d : absolute path to custom dependency file (default deps.csv)
+       -s : set up a private repository. DWM patches are automatically fetched
+            and applied. every patch is applied on its own branch
+       -r : reset private repostirory (CAUTION: this will delete all branches
+            and reset the copy of your private dwm repository)
+```
+
+If you run `./dwmgr.sh -h`, the tool will create a personal `my-dwm` git
+repository that contains all the feature branches.
+
+
+# License
+
+The MIT License (MIT)
+
+Copyright (c) 2020 Julian Thome <julianthome@pm.me>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+

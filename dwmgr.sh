@@ -117,19 +117,25 @@ while getopts "hsr" opt; do
     case ${opt} in
         h)
             print_help
+            exit 0
             ;;
         s)
-            setup && exit 0
+            setup 
+            exit 0
             ;;
         r)
             reset
+            exit 0
             ;;
         \?) 
             print_help
+
+            exit 0
             ;;
     esac
 done
 
 
 print_help
+
 exit 1
