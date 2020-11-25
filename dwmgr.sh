@@ -1,7 +1,6 @@
 #!/bin/sh
 # Configuration parameters
 
-set -ex pipefail
 
 PERSONAL_DWM_REPO="my-dwm"
 PATCHES_PATH="patches"
@@ -9,70 +8,84 @@ DWM_URL="dwm.suckless.org"
 PATCH_PATH="${DWM_URL}/${PATCHES_PATH}"
 PATCHES_URL="https://${PATCH_PATH}/"
 DWM_VERSION="6.2"
+ANOTHER_PATCH_CYCLE=1
+
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH="."
+DEPS="../deps.csv"
 
 clone_repo() { 
     [ -d "$PERSONAL_DWM_REPO" ] || {
         git clone https://git.suckless.org/dwm "$PERSONAL_DWM_REPO"
-        #(cd "$PERSONAL_DWM_REPO" && git checkout "$DWM_VERSION")
-    }
+            #(cd "$PERSONAL_DWM_REPO" && git checkout "$DWM_VERSION")
+        }
 }
 
 download_patches() {
-    wget -q --recursive ‐-mirror \
-        --wait=15 --limit-rate=50K \
+    [ -d "$PATCH_PATH" ] || {
+        wget -q --recursive ‐-mirror \
         --domains "${DWM_URL}" --no-parent "${PATCHES_URL}"
+    }
 }
 
-prepare_repo() { 
+apply_patch() {
+    local patch_file="$1"
+    echo "---> apply patch: $patch_file" 
+    patch -s -t -p1 -F 3 < "$patch_file" || {
+        echo "Could not apply patch $patch_file"     
+        echo "returning"
+        exit 1
+    }
+}
+
+process_patches() { 
     clone_repo
+    download_patches
+
+    set -e pipefail
+
     cd "$PERSONAL_DWM_REPO"
-    find "../${PATCH_PATH}" \
-        -type d \
-        -mindepth 1 \
-        -maxdepth 1 \
-        -name "historical" -prune \
-        -o -print | while read -r extension; do
-            echo "Feature: $(basename "$extension")"
+    cat $DEPS | while read -r row; do
+        MAINPATCH="$(echo $row | cut -d ',' -f 1)"
 
-            find "$extension" \
-                -type f \
-                -name "dwm-*${DWM_VERSION}.diff" \
-                | sort \
-                | uniq \
-                | while read -r patch; do
-               
-                BASE=$(basename "${patch%.*}")
-                PATCH_NAME=$(echo "$BASE" | cut -d '-' -f 2)
-                BRANCH_NAME="$PATCH_NAME"
-                FEATURE_NAME=$(echo "$BASE" | cut -d '-' -f 3)
-                
-                [ "$FEATURE_NAME" = "$DWM_VERSION" ] || {
-                    BRANCH_NAME="${BRANCH_NAME}_${FEATURE_NAME}"
-                }
+        DEPENDENCIES="$(echo $row | cut -d ',' -f 2-)"
+        FEATURE_NAME="$(basename $(dirname $MAINPATCH))"
+        BRANCH_NAME=$(basename "${MAINPATCH%.*}")
+     
+        echo "looking at feature: $FEATURE_NAME"
+        echo "patch: $MAINPATCH"
+        echo "branch: $BRANCH_NAME"
 
-                EXISTGING_BRANCH=$(git branch -l "$BRANCH_NAME")
+        EXISTING_BRANCH=$(git branch -l "$BRANCH_NAME" | tr -d ' ')
 
-                [ "$EXISTGING_BRANCH" = "$BRANCH_NAME" ] && {
-                    echo "branch $EXISTGING_BRANCH already present - skipping" 
-                    continue
-                }
+        [ "$EXISTING_BRANCH" = "$BRANCH_NAME" ] && {
+            echo "branch $EXISTING_BRANCH already present - skipping" 
+            continue
+        }
 
-                echo "apply patch $BASE on branch $BRANCH_NAME"
-                git checkout -b "$BRANCH_NAME"
+        echo "apply patch $BASE on branch $BRANCH_NAME"
+        git checkout -b "$BRANCH_NAME"
 
-                patch -s -t -p1 -F 3 < "$patch" || {
-                    echo "Could not apply patch $patch"     
-                    echo "returning"
-                    exit 1
-                }
-
-                git add -A                
-                git commit -m "applied patch"
-                git checkout origin/master
+        [ -n "$DEPENDENCIES" ] && {
+            echo "$DEPENDENCIES" | tr ',' '\n' | while read dep; do
+                apply_patch "../$PATCH_PATH/$dep"
             done
+        }
+
+        apply_patch "../$PATCH_PATH/$MAINPATCH"
+        make clean && make config.h && make 
+
+        [ $? -eq 0 ] || {
+            echo "could not run build"
+            exit 1
+        }
+
+        git add -A                
+        git commit -m "applied patch"
+        git clean -d -f
+        git checkout "$DWM_VERSION"
     done
-    return 0
 }
 
-prepare_repo
-exit 0
+process_patches
+#exit 0
