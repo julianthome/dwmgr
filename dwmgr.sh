@@ -70,13 +70,13 @@ setup() {
         }
 
         apply_patch "../$PATCH_PATH/$MAINPATCH"
-        make clean
         make config.h
         make || {
             echo "could not run build"
             exit 1
         }
 
+        make clean
         git add -A                
         git commit -m "applied patch"
         git clean -d -f

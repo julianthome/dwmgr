@@ -29,9 +29,31 @@ The `h` option will show you all available options.
             and reset the copy of your private dwm repository)
 ```
 
-If you run `./dwmgr.sh -h`, the tool will create a personal `my-dwm` git
-repository that contains all the feature branches.
+## Build basic configuration repository
 
+If you run `./dwmgr.sh -s`, the tool will create a personal `my-dwm` git
+repository that contains all the feature branches by applying the patches
+listed in `deps.csv`. Note that `deps.csv` is a CSV file where the first column
+is the main patch (that corresponds to a branch) followed by the patches it
+depends on.
+
+After runnint `./dwmgr.sh -s`, you should be able to see the different features
+branches by aftr running `(cd my-dwm && git branch -l)`.
+
+## Manage your own, personal DWM config
+
+```
+# switch into my-dwm git repostory
+cd my-dwm
+# build you own configuration branch
+git checkout -b my-dwm
+# merge in your configurations and resolve conflicts
+git merge dwm-uselessgap-6.2
+# ...
+git merge dwm-rotatestack-20161021-ab9571b
+# Check build
+make
+```
 
 # License
 
