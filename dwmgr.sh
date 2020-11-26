@@ -111,8 +111,6 @@ print_help() {
 EOF
 }
 
-
-
 while getopts "hsr" opt; do
     case ${opt} in
         h)
@@ -129,12 +127,10 @@ while getopts "hsr" opt; do
             ;;
         \?) 
             print_help
-
             exit 0
             ;;
     esac
 done
-
 
 print_help
 
