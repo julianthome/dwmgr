@@ -3,7 +3,7 @@
 dwmgr is configuration manager for [DWM](https://dwm.suckless.org/). DWM is a
 dynamic tiling window manager which is based on the suckless philosophy.
 
-DWM is customized through patches which can be difficult to handle withoug
+DWM is customized through patches which can be difficult to handle without
 version control especially during the initial experimentation phase in which
 you try out features to figure out what functionality should be included in the
 personal DWM config.
