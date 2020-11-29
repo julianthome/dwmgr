@@ -30,7 +30,7 @@ The `h` option will show you all available options.
 
 ## Build basic configuration repository
 
-If you run `./dwmgr.sh -s`, the tool will create a personal `my-dwm` git
+If you run `./dwmgr.sh -s dwm`, the tool will create a personal `my-dwm` git
 repository that contains all the feature branches by applying the patches
 listed in `[dwm|dmeny]-deps.csv`, dependency files where the first column is
 the main patch (that corresponds to a branch) followed by the patches it
