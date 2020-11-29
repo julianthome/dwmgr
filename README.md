@@ -1,4 +1,4 @@
-# dwmgr - a simple configuration manager for DWM
+# dwmgr - a simple configuration manager for suckless tools
 
 dwmgr is configuration manager for various [suckless tools](https://suckless.org/) 
 such as [DWM](https://dwm.suckless.org/) and [dmenu](https://tools.suckless.org/dmenu/).
